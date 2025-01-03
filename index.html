@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Environmental Studies Quiz</title>
+    <style>
+        /* Neumorphism UI */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #e0e5ec;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        .quiz-container {
+            background: #e0e5ec;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 10px 10px 20px #a3b1c6, -10px -10px 20px #ffffff;
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+        }
+        .question-card {
+            margin-bottom: 20px;
+        }
+        .question {
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            color: #333;
+            font-weight: 600;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .option {
+            padding: 15px;
+            margin: 5px 0;
+            background: #e0e5ec;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1em;
+            color: #333;
+            box-shadow: 5px 5px 10px #a3b1c6, -5px -5px 10px #ffffff;
+        }
+        .option:hover {
+            box-shadow: inset 5px 5px 10px #a3b1c6, inset -5px -5px 10px #ffffff;
+        }
+        .correct {
+            background: #d4f7e2;
+            box-shadow: inset 5px 5px 10px #a3b1c6, inset -5px -5px 10px #ffffff;
+        }
+        .wrong {
+            background: #ffd6d6;
+            box-shadow: inset 5px 5px 10px #a3b1c6, inset -5px -5px 10px #ffffff;
+        }
+        .result {
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #333;
+        }
+        .next-button {
+            padding: 12px 25px;
+            background: #e0e5ec;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-size: 1em;
+            color: #333;
+            box-shadow: 5px 5px 10px #a3b1c6, -5px -5px 10px #ffffff;
+            transition: all 0.3s ease;
+        }
+        .next-button:hover {
+            box-shadow: inset 5px 5px 10px #a3b1c6, inset -5px -5px 10px #ffffff;
+        }
+        .score {
+            font-size: 1.2em;
+            color: #333;
+            margin-top: 20px;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #777;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="quiz-container">
+        <div id="question-container">
+            <!-- Questions will be dynamically inserted here -->
+        </div>
+        <button id="next-button" class="next-button" onclick="nextQuestion()">Next Question</button>
+        <div class="score" id="score">Score: 0/50</div>
+        <div class="footer" id="footer">Made with ❤️ by Robii</div>
+    </div>
+
+    <script>
+        const questions = [
+        {
+            "question": "Which one of the following is an example of man-made environment?",
+            "options": ["Orchards", "Sanctuaries", "Crop fields", "Plantations"],
+            "answer": "Crop fields"
+        },
+        {
+            "question": "Who coined the term ‘Possibilism’?",
+            "options": ["Lucien Febvre", "Vidal de la Blache", "Ellen Churchill Semple", "C.S. Holling"],
+            "answer": "Vidal de la Blache"
+        },
+        {
+            "question": "Which one of the following is not one of the seventeen Sustainable Development Goals?",
+            "options": ["Life on land", "Life on air", "Life below water", "Climate action"],
+            "answer": "Life on air"
+        },
+        {
+            "question": "Holding meeting in a remote location to minimise public participation is an example of _____.",
+            "options": ["Geographical inequity", "Procedural inequity", "Social inequity", "Economic inequity"],
+            "answer": "Procedural inequity"
+        },
+        {
+            "question": "Which of the following views towards nature was proposed as an alternative to patriarchal system of domination?",
+            "options": ["Biocentrism", "Ecocentrism", "Anthropocentrism", "Ecofeminism"],
+            "answer": "Ecofeminism"
+        },
+        {
+            "question": "The main centre of ENVIS is located at:",
+            "options": ["Bengaluru", "Delhi", "Ahmedabad", "Kolkata"],
+            "answer": "Delhi"
+        },
+        {
+            "question": "Primary consumers are:",
+            "options": ["Herbivores", "Plants", "Carnivores", "Autotrophs"],
+            "answer": "Herbivores"
+        },
+        {
+            "question": "The following components — sulphates in water, acid rain and fossil fuel are part of the:",
+            "options": ["Carbon cycle", "Nitrogen cycle", "Water cycle", "Sedimentary cycle"],
+            "answer": "Sedimentary cycle"
+        },
+        {
+            "question": "In ecological succession, the final stage is termed as:",
+            "options": ["Climax community", "Lichen stage", "Moss stage", "Seral stage"],
+            "answer": "Climax community"
+        },
+        {
+            "question": "In an ecosystem, energy is lost in the form of:",
+            "options": ["Heat energy", "Saprophytic matter", "Chemical energy", "Rains"],
+            "answer": "Heat energy"
+        },
+        {
+            "question": "At global level the region most prone to natural calamities is:",
+            "options": ["Australia", "Asia", "Africa", "Latin America"],
+            "answer": "Asia"
+        },
+        {
+            "question": "Among the following factories, which is not in the “Taj Trapezium Zone”?",
+            "options": ["Glass Factories", "Mathura Oil Refinery", "Mathura Sugar Factory", "Brick Kilns"],
+            "answer": "Mathura Sugar Factory"
+        },
+        {
+            "question": "Silent Valley is the narrow valley of the ______ river.",
+            "options": ["Periyar", "Kunthi", "Kaveri", "Jamuna"],
+            "answer": "Kunthi"
+        },
+        {
+            "question": "The world population around 800 BC was approximately:",
+            "options": ["3 million", "4 million", "5 million", "6 million"],
+            "answer": "5 million"
+        },
+        {
+            "question": "The temperate deciduous forests have:",
+            "options": ["Trees with vines and strangler fig", "Shrubs with the height of 3 – 5 metres", "Evergreen fir and pine trees with 30 – 40 metres height", "Trees of 40 – 50 metres height with thin and broad leaves"],
+            "answer": "Trees of 40 – 50 metres height with thin and broad leaves"
+        },
+        {
+            "question": "In India, Teak and Bamboo are common in:",
+            "options": ["Tropical seasonal forests", "Temperate evergreen forests", "Coniferous forests", "Tropical rain forests"],
+            "answer": "Tropical seasonal forests"
+        },
+        {
+            "question": "In Indian grassland ecosystem, the biomass peaks in the period between:",
+            "options": ["January to March", "March to May", "September to October", "November to January"],
+            "answer": "September to October"
+        },
+        {
+            "question": "An example of lotic freshwater ecosystem is:",
+            "options": ["Lake", "Pool", "Swamp", "River"],
+            "answer": "River"
+        },
+        {
+            "question": "DDT, due to its non-specific mode of action, affected the population of:",
+            "options": ["Marine fish", "Deer", "Rats", "Birds"],
+            "answer": "Birds"
+        },
+        {
+            "question": "Steady rehabilitation of the Great Indian Rhinoceros was hampered because:",
+            "options": ["Enough food was not available in the habitat", "Of difficult climatic conditions", "Of the rinderpest disease", "Of competition with other animals"],
+            "answer": "Of the rinderpest disease"
+        },
+        {
+            "question": "The problem of invasive species is likely to increase due to:",
+            "options": ["Climate change", "Mining", "Desertification", "Heavy rain"],
+            "answer": "Climate change"
+        },
+        {
+            "question": "Alien species which is known to cause skin allergies is:",
+            "options": ["Prosopis juliflora", "Ectopistes migratorius", "Parthenium hysterophorus", "Eucalyptus citriodora"],
+            "answer": "Parthenium hysterophorus"
+        },
+        {
+            "question": "Which one of the following is not a criterion for designation of biodiversity hotspots?",
+            "options": ["Species richness", "Endemism", "Accelerated species loss", "Lesser interspecific competition"],
+            "answer": "Lesser interspecific competition"
+        },
+        {
+            "question": "Biodiversity of a geographical region represents:",
+            "options": ["Genetic diversity present in the dominant species of the region", "Species endemic to the region", "Endangered species found in the region", "Diversity of life forms and ecological processes in the region"],
+            "answer": "Diversity of life forms and ecological processes in the region"
+        },
+        {
+            "question": "Which one of the following is found only in the Western Ghats?",
+            "options": ["Barking Deer", "Malabar Grey Hornbill", "Sloth Bear", "Wild Buffalo"],
+            "answer": "Malabar Grey Hornbill"
+        },
+        {
+            "question": "The main source of water for lakes and rivers is:",
+            "options": ["Rainfall", "Runoff", "Transpiration", "Sublimation"],
+            "answer": "Rainfall"
+        },
+        {
+            "question": "Which of the following is not true for red soil?",
+            "options": ["It supports rainforests and grasslands.", "It is found in plateaus and low land areas of Eastern Bihar, Madhya Pradesh and Andhra Pradesh.", "It is good for cultivation of potatoes, rubber and bananas.", "It is good for crops of cotton, rice and groundnut."],
+            "answer": "It supports rainforests and grasslands."
+        },
+        {
+            "question": "An ‘aquifer’ is:",
+            "options": ["The boundary between the saturated zone and unsaturated zone in rocks.", "A layer of rock through which water percolates down.", "The gap in the soil which is filled with air and water.", "The gap in the soil which is completely filled with water."],
+            "answer": "A layer of rock through which water percolates down."
+        },
+        {
+            "question": "The most effective treatment of alkaline soil is to apply:",
+            "options": ["Urea", "Potassium", "Sodium nitrate", "Gypsum"],
+            "answer": "Gypsum"
+        },
+        {
+            "question": "From which of the following types of sources can energy be harnessed using photovoltaic cell?",
+            "options": ["Wind", "Geothermal", "Sun", "Water"],
+            "answer": "Sun"
+        },
+        {
+            "question": "The first wave/tidal energy plant was established in India at:",
+            "options": ["Chennai", "Thiruvananthapuram", "Kochi", "Vishakhapatnam"],
+            "answer": "Thiruvananthapuram"
+        },
+        {
+            "question": "The largest coal producing country in the world is:",
+            "options": ["India", "South Africa", "China", "United States of America"],
+            "answer": "China"
+        },
+        {
+            "question": "The maximum population that can be supported by the resources of the planet at a given level of technology:",
+            "options": ["Is the biophysical capacity.", "Is the social carrying capacity.", "Indicates standard of living of people.", "Indicates economic growth."],
+            "answer": "Is the biophysical capacity."
+        },
+        {
+            "question": "Among the following, which one is the major contributor to greenhouse effect?",
+            "options": ["Nitrogen", "Oxygen", "Argon", "Water vapour"],
+            "answer": "Water vapour"
+        },
+        {
+            "question": "Which of the following statements is correct for Ultra Violet (UV) radiation?",
+            "options": ["UV C is not absorbed by oxygen.", "UV B is absorbed by the ozone layer.", "UV A is not absorbed by the ozone layer.", "UV C is not dangerous."],
+            "answer": "UV B is absorbed by the ozone layer."
+        },
+        {
+            "question": "Which one of the following can cause skin cancer and cataract in humans?",
+            "options": ["Ozone", "UV radiation", "Acid rain", "Methane"],
+            "answer": "UV radiation"
+        },
+        {
+            "question": "Which one of the following is a secondary pollutant?",
+            "options": ["Ozone", "Carbon dioxide", "Carbon monoxide", "Sulphur dioxide"],
+            "answer": "Ozone"
+        },
+        {
+            "question": "The standard level of RSPM is:",
+            "options": ["60 micrograms per cubic metre", "70 micrograms per cubic metre", "160 micrograms per cubic metre", "170 micrograms per cubic metre"],
+            "answer": "60 micrograms per cubic metre"
+        },
+        {
+            "question": "The Kyoto Protocol deals with which environmental issue?",
+            "options": ["Greenhouse gas emissions", "Biological diversity", "Ozone layer depletion", "Persistent organic pollutant"],
+            "answer": "Greenhouse gas emissions"
+        },
+        {
+            "question": "Hotspots are regions of high:",
+            "options": ["Rarity", "Endemism", "Critically endangered population", "Diversity"],
+            "answer": "Endemism"
+        },
+        {
+            "question": "What is the main aim of the 1987 Amendment of the Air (Prevention and Control of Pollution) Act, 1981?",
+            "options": ["To enable an integrated approach to environmental problems", "To set up State Air Pollution Control Boards", "To set up Central Pollution Control Board", "To introduce stiffer penalties"],
+            "answer": "To introduce stiffer penalties"
+        },
+        {
+            "question": "The Forest (Conservation) Act was enacted in the year:",
+            "options": ["1972", "1974", "1980", "1986"],
+            "answer": "1980"
+        },
+        {
+            "question": "Which convention took up the protection of ozone layer?",
+            "options": ["Vienna Convention", "Basel Convention", "Stockholm Convention", "Montreal Convention"],
+            "answer": "Vienna Convention"
+        },
+        {
+            "question": "Which one of the following is generally not a recyclable waste?",
+            "options": ["Glass", "Metals", "Medical waste", "Plastics"],
+            "answer": "Medical waste"
+        },
+        {
+            "question": "Which one of the following is not a method of waste minimisation?",
+            "options": ["Process modification", "Waste concentration", "Treatment of waste", "Waste segregation"],
+            "answer": "Treatment of waste"
+        },
+        {
+            "question": "Which one of the following is not a method of disposal of hazardous waste?",
+            "options": ["Sanitary landfills", "Incineration", "Dumping at sea", "Underground disposal"],
+            "answer": "Sanitary landfills"
+        },
+        {
+            "question": "Which one of the following is not correct in the context of biodiversity in India?",
+            "options": ["India has 6 biodiversity hotspots.", "About 33% of the recorded flora is endemic.", "India has 10 biogeographic regions.", "India is one of the 12 centres of origin of cultivated plants."],
+            "answer": "India has 6 biodiversity hotspots."
+        },
+        {
+            "question": "Which one of the following does not represent ecological significance of forest?",
+            "options": ["Supporting natural ecological system", "Moderation of global climate", "Protection of biodiversity", "Providing aesthetic and spiritual value"],
+            "answer": "Providing aesthetic and spiritual value"
+        },
+        {
+            "question": "Which one of the following is not included in the category of Non-Timber Forest Product?",
+            "options": ["Medicinal herbs", "Edible flowers", "Animal hides and bones", "Edible fruits"],
+            "answer": "Animal hides and bones"
+        },
+        {
+            "question": "Joint Forest Management was firstly implemented in the State of:",
+            "options": ["Haryana", "West Bengal", "Madhya Pradesh", "Kerala"],
+            "answer": "West Bengal"
+        }
+    ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        const questionContainer = document.getElementById('question-container');
+        const nextButton = document.getElementById('next-button');
+        const scoreDisplay = document.getElementById('score');
+        const footer = document.getElementById('footer');
+
+        function showQuestion() {
+            const question = questions[currentQuestionIndex];
+            const questionHTML = `
+                <div class="question-card">
+                    <div class="question">${question.question}</div>
+                    <div class="options">
+                        ${question.options.map(option => `
+                            <div class="option" onclick="checkAnswer('${option}')">${option}</div>
+                        `).join('')}
+                    </div>
+                    <div class="result" id="result"></div>
+                </div>
+            `;
+            questionContainer.innerHTML = questionHTML;
+        }
+
+        function checkAnswer(selectedOption) {
+            const question = questions[currentQuestionIndex];
+            const result = document.getElementById('result');
+            if (selectedOption === question.answer) {
+                result.textContent = "Correct! 🎉";
+                result.style.color = "#28a745";
+                score++;
+            } else {
+                result.textContent = `Wrong! The correct answer is: ${question.answer} 😢`;
+                result.style.color = "#dc3545";
+            }
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => {
+                option.onclick = null; // Disable further clicks
+                if (option.textContent === question.answer) {
+                    option.classList.add('correct');
+                } else if (option.textContent === selectedOption) {
+                    option.classList.add('wrong');
+                }
+            });
+            scoreDisplay.textContent = `Score: ${score}/${questions.length}`;
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                questionContainer.innerHTML = `<div class="question-card">Quiz Over! 🎉 Your final score is ${score}/${questions.length}</div>`;
+                nextButton.style.display = 'none';
+                footer.style.display = 'block'; // Show the footer at the end
+            }
+        }
+
+        showQuestion();
+    </script>
+</body>
+</html>
